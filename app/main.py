@@ -1,11 +1,18 @@
 import logging
+import os
 
 import numpy as np
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
-from app.model.model import __version__ as model_version
-from app.model.model import predict_power
+from model.model import __version__ as model_version
+from model.model import predict_power
+
+load_dotenv()
+
+port = int(os.getenv("PORT"))
 
 app = FastAPI()
 
@@ -35,3 +42,6 @@ def predict(payload: DataIn):
     power = predict_power(measurements)
 
     return {"power": power}
+
+if __name__=="__main__":
+    uvicorn.run("main:app",host="0.0.0.0", port=port, reload=False)
